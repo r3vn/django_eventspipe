@@ -1,4 +1,5 @@
 src/django_eventspipe.egg-info/*
+src/django_eventspipe/django_eventspipe.egg-info/*
 dist/*
 __pycache__
 *.pyc
