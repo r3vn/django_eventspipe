@@ -1,3 +1,5 @@
+src/django_eventspipe.egg-info/*
+dist/*
 __pycache__
 *.pyc
 *.DS_Store
