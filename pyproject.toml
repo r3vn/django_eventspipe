@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "django_eventspipe"
-version = "0.1.0b1-2"
+name = "django-eventspipe"
+version = "0.1.0b2"
 authors = [
   { name="Giuseppe Corti", email="giuseppe.corti@pm.me" },
 ]
@@ -29,6 +29,6 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/r3vn/django_eventspipe"
-Issues = "https://github.com/r3vn/django_eventspipe/issues"
+Homepage = "https://github.com/r3vn/django-eventspipe"
+Issues = "https://github.com/r3vn/django-eventspipe/issues"
 
