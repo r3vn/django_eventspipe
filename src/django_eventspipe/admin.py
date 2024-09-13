@@ -11,19 +11,18 @@ from .models import (
     Task,
     TaskDefinition,
     Pipeline,
-    Artifact,
     PipelineArtifact
 )
 
-class InlinePipeline(admin.TabularInline):
-    model = PipelineArtifact
-    extra = 0
-    ordering = ("pk",)
-    can_delete = False
-    readonly_fields = [
-        'pk',
-        'pipeline',
-    ]
+#class InlinePipeline(admin.TabularInline):
+#    model = PipelineArtifact
+#    extra = 0
+#    ordering = ("pk",)
+#    can_delete = False
+#    readonly_fields = [
+#        'pk',
+#        'pipeline',
+#    ]
 
 class InlineTask(admin.TabularInline):
     model = Task
@@ -184,18 +183,19 @@ class TaskDefinitionAdmin(admin.ModelAdmin):
     )
     ordering = ('function',)
 
-@admin.register(Artifact)
-class ArtifactAdmin(admin.ModelAdmin):
+@admin.register(PipelineArtifact)
+class PipelineArtifactAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
-        "name",
-        "size",
-        "md5sum",
+        "file_name",
+        "artifact__size",
+        "artifact__md5sum",
+        linkify("pipeline"),
         "timestamp",
         "download"
     )
 
-    inlines = [InlinePipeline]
+    #inlines = [InlinePipeline]
     readonly_fields = []
 
     # https://stackoverflow.com/a/19884095
@@ -210,9 +210,9 @@ class ArtifactAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    def download(self, obj: Artifact) -> str:
+    def download(self, obj: PipelineArtifact) -> str:
         url = reverse('get_artifact', args=(obj.pk,))
         return format_html("<a class='button' href='%s'>📝 DOWNLOAD</a>" % url)
 
-    def size(self, obj: Artifact) -> str:
+    def size(self, obj: PipelineArtifact) -> str:
         return "%s KB" % str(obj.get_size())
