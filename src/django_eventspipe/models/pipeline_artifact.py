@@ -8,7 +8,7 @@ class PipelineArtifact(models.Model):
     file_name = models.CharField(max_length=1024, default="undefined")
     pipeline  = models.ForeignKey("django_eventspipe.Pipeline", on_delete=models.CASCADE)
     artifact  = models.ForeignKey("django_eventspipe.Artifact", on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
     @classmethod
     def add_artifact(cls, pipeline: object, file_name: str, file_data: bytes) -> bool:

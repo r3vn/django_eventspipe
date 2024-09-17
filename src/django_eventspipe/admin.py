@@ -188,7 +188,7 @@ class PipelineArtifactAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
         "file_name",
-        "artifact__size",
+        "size",
         "artifact__md5sum",
         linkify("pipeline"),
         "timestamp",
@@ -215,4 +215,4 @@ class PipelineArtifactAdmin(admin.ModelAdmin):
         return format_html("<a class='button' href='%s'>📝 DOWNLOAD</a>" % url)
 
     def size(self, obj: PipelineArtifact) -> str:
-        return "%s KB" % str(obj.get_size())
+        return "%s KB" % str(obj.artifact.get_size())
