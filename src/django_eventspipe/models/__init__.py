@@ -5,3 +5,4 @@ from .pipeline_definition_task_definition import PipelineDefinitionTaskDefinitio
 from .pipeline import Pipeline
 from .task import Task
 from .pipeline_artifact import PipelineArtifact
+from .event_schedule import EventSchedule

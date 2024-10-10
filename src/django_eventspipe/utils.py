@@ -11,26 +11,40 @@ def get_sentinel_user() -> User:
     """
     return get_user_model().objects.get_or_create(username="deleted")[0]
 
-# https://stackoverflow.com/a/53092940
-def linkify(field_name: str) -> str:
+def linkify(field_path: str) -> str:
     """
-    Converts a foreign key value into clickable links.
+    Converts a foreign key value or foreign keys of foreign keys into clickable links.
     
-    If field_name is 'parent', link text will be str(obj.parent)
-    Link will be admin url for the admin url for obj.parent.id:change
+    If field_path is 'parent.child', link text will be str(obj.parent.child)
+    Link will be the admin url for obj.parent.child.id:change
     """
     def _linkify(obj):
-        linked_obj = getattr(obj, field_name)
-        if linked_obj is None:
+        # Traverse the field path to get the related object
+        related_obj = obj
+        try:
+            for part in field_path.split('.'):
+                related_obj = getattr(related_obj, part)
+                if related_obj is None:
+                    return '-'
+        except AttributeError:
             return '-'
-        app_label = linked_obj._meta.app_label
-        model_name = linked_obj._meta.model_name
-        view_name = f'admin:{app_label}_{model_name}_change'
-        link_url = reverse(view_name, args=[linked_obj.pk])
-        return format_html('<a href="{}">{}</a>', link_url, linked_obj)
 
-    _linkify.short_description = field_name  # Sets column name
+        # Build the admin change URL
+        app_label = related_obj._meta.app_label
+        model_name = related_obj._meta.model_name
+        view_name = f'admin:{app_label}_{model_name}_change'
+        link_url = reverse(view_name, args=[related_obj.pk])
+
+        return format_html('<a href="{}">{}</a>', link_url, related_obj)
+
+    _linkify.short_description = field_path.replace('.', ' -> ')  # Sets column name
     return _linkify
+
+def cronexp(field: str):
+    """
+    Representation of cron expression.
+    """
+    return field and field.replace(' ', '') or '*'
 
 # https://stackoverflow.com/a/72256767
 class PrettyJSONEncoder(json.JSONEncoder):

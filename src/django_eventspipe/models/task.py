@@ -55,8 +55,7 @@ class Task(models.Model):
         self.status = 0
         self.node = node
         self.start_ts = timezone.now()
-        self.save()
-
+        
         # Increase Pipeline's current_task
         self.pipeline.current_task += 1
 
@@ -65,6 +64,7 @@ class Task(models.Model):
             self.pipeline.status = 0
 
         self.pipeline.save()
+        self.save()
 
     def tracking_update(self, status: int) -> None:
         """
@@ -73,7 +73,6 @@ class Task(models.Model):
         # Update this object
         self.status = status
         self.end_ts = timezone.now()
-        self.save()
 
         if status == 1:
             # Check if pipeline is completed
@@ -84,3 +83,5 @@ class Task(models.Model):
         else:
             # Set pipeline and all queued Tasks as failed
             self.pipeline.fail()
+
+        self.save()

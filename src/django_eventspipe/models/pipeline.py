@@ -31,7 +31,7 @@ class Pipeline(models.Model):
     user         = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
 
     @classmethod
-    def new_from_event(cls, event: dict) -> object | bool:
+    def new_from_event(cls, user: User, event: dict[str, object]) -> object | bool:
         """
         This function attempt to create and execute a `Pipeline` objects from a dict.
         `Pipeline` objects require a `PipelineDefinition` object defined in order to start.
@@ -58,7 +58,7 @@ class Pipeline(models.Model):
             # Create Pipeline object
             pipeline = cls(
                 name=pipeline_name, 
-                user=User.objects.get(pk=event["user"]), 
+                user=user, 
                 node=platform.node(),
                 definition=definition
             )
@@ -94,7 +94,7 @@ class Pipeline(models.Model):
 
         return PipelineArtifact.get_artifacts(self)
 
-    def run(self, event: dict) -> None:
+    def run(self, event: dict[str, object]) -> None:
         """ 
         Execute a `Pipeline`
         """

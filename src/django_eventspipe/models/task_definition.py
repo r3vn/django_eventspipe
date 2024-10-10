@@ -14,7 +14,7 @@ class TaskDefinition(models.Model):
 
         # skip celery stuff
         for task in tasks:
-            if "celery." in task: continue
+            if "celery." in task or "django_eventspipe." in task: continue
             clean_tasks.append(task)
 
         # remove uknown `TaskDefinition`

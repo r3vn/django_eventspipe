@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-eventspipe"
-version = "0.1.0b3-1"
+version = "0.1.0b4"
 authors = [
   { name="Giuseppe Corti", email="giuseppe.corti@pm.me" },
 ]
@@ -13,7 +13,8 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "django>=5.0",
-    "celery>=5.4"
+    "celery>=5.4",
+    "python-crontab>=2.3.4"
 ]
 classifiers = [
     "Environment :: Web Environment",

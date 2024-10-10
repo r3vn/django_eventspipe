@@ -11,18 +11,9 @@ from .models import (
     Task,
     TaskDefinition,
     Pipeline,
-    PipelineArtifact
+    PipelineArtifact,
+    EventSchedule
 )
-
-#class InlinePipeline(admin.TabularInline):
-#    model = PipelineArtifact
-#    extra = 0
-#    ordering = ("pk",)
-#    can_delete = False
-#    readonly_fields = [
-#        'pk',
-#        'pipeline',
-#    ]
 
 class InlineTask(admin.TabularInline):
     model = Task
@@ -64,12 +55,16 @@ class JsonOptionsForm(forms.ModelForm):
         required=False
     )
 
+class JsonEventForm(forms.ModelForm):
+    event = forms.JSONField(
+        encoder=PrettyJSONEncoder,
+        required=False
+    )
+
 class InlineTaskDefinition(admin.TabularInline):
     model = PipelineDefinitionTaskDefinition
     extra = 0
     ordering = ("order",)
-    #form = JsonOptionsForm
-
     exclude = ['options']
 
     def _name(self, obj):
@@ -117,6 +112,37 @@ class PipelineAdmin(admin.ModelAdmin):
             )
         )
 
+@admin.register(EventSchedule)
+class EventScheduleAdmin(admin.ModelAdmin):
+    list_display = (
+        "pk",
+        "enabled",
+        "__str__",
+        "user",
+        "event",
+    )
+    form = JsonEventForm
+
+    @admin.action(description="Disable selected EventSchedule")
+    def disable_selection(self, request, queryset):
+        for object in queryset:
+            object.enabled = False
+            object.save()
+
+    @admin.action(description="Enable selected EventSchedule")
+    def enable_selection(self, request, queryset):
+        for object in queryset:
+            object.enabled = True
+            object.save()
+
+    @admin.action(description="Duplicate selected EventSchedule")
+    def duplicate_selection(self, request, queryset):
+        for object in queryset:
+            object.id = None
+            object.save()
+
+    actions = [duplicate_selection, enable_selection, disable_selection]
+
 @admin.register(PipelineDefinition)
 class PipelineDefinitionAdmin(admin.ModelAdmin):
     list_display = (
@@ -132,14 +158,12 @@ class PipelineDefinitionAdmin(admin.ModelAdmin):
     @admin.action(description="Disable selected PipelineDefinition")
     def disable_selection(self, request, queryset):
         for object in queryset:
-
             object.enabled = False
             object.save()
 
     @admin.action(description="Enable selected PipelineDefinition")
     def enable_selection(self, request, queryset):
         for object in queryset:
-
             object.enabled = True
             object.save()
 
@@ -195,7 +219,6 @@ class PipelineArtifactAdmin(admin.ModelAdmin):
         "download"
     )
 
-    #inlines = [InlinePipeline]
     readonly_fields = []
 
     # https://stackoverflow.com/a/19884095
